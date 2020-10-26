@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
 import { HTTP } from '@ionic-native/http/ngx';
+import { environment } from 'src/environments/environment';
 const { Camera,Device } = Plugins;
 
 @Component({
@@ -50,7 +51,7 @@ export class HomePage {
     };
 
 		this.http.setDataSerializer('json');
-    this.http.post('http://192.168.1.186:5000/pushImage', file, headers)
+    this.http.post(`http://${environment.ip}:5000/pushImage`, file, headers)
       .then((data) => {
         console.log(data)
       })
