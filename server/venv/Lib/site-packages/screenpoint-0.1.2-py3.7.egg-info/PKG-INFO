@@ -1,0 +1,49 @@
+Metadata-Version: 2.1
+Name: screenpoint
+Version: 0.1.2
+Summary: Project an image centroid to another image using OpenCV
+Home-page: https://github.com/cyrildiagne/screenpoint
+Author: Cyril Diagne
+Author-email: diagne.cyril@gmail.com
+License: MIT
+Download-URL: https://github.com/cyrildiagne/screenpoint/archive/v0.1.0.tar.gz
+Description: # ScreenPoint
+        
+        Finds the (x,y) coordinates of the centroid of an image (eg: a mobile phone camera image) pointing at another image (eg: a computer screen) using [OpenCV SIFT](https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html).
+        
+        ![debug view](example/match_debug.png)
+        
+        ## Installation
+        
+        ```bash
+        pip install screenpoint
+        ```
+        
+        ## Usage
+        
+        ```python
+        import screenpoint
+        import cv2
+        
+        # Load input images.
+        screen = cv2.imread('screen.png', 0)
+        view = cv2.imread('view.jpg', 0)
+        
+        # Project view centroid to screen space.
+        # x and y are the coordinate of the `view` centroid in `screen` space.
+        x, y = screenpoint.project(view, screen)
+        ```
+        
+        See [example.py](example.py) for more information.
+        
+Keywords: opencv,sift,projection
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Description-Content-Type: text/markdown

@@ -1,7 +1,21 @@
+<div id="container">
+    <button (click)="this.actualizarBack()" style="top: 10px;">Actualizar</button>
+    <button (click)="this.limpiar()" style="top: 100px;">Limpiar</button>
+
+    <img *ngFor="let data of listaImagenes" src="data:image/png;base64,{{data.img}}" style='left:{{data.x}}px;top:{{data.y}}px;'>
+
+    <div id="blanco"></div>
+    <div id="rojo"></div>
+    <div id="amarillo"></div>
+    <div id="azul"></div>
+
+</div>
+
+<button (click)="this.take()" style="top: 200px;" *ngIf="this.isApp">Next</button>
 <ion-content *ngIf="this.isApp">
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button (click)="takePicture()">
-      <ion-icon name="camera"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+        <ion-fab-button (click)="takePicture()">
+            <ion-icon name="camera"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 </ion-content>

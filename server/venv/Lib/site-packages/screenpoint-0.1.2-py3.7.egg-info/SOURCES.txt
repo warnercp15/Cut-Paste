@@ -1,0 +1,10 @@
+README.md
+setup.cfg
+setup.py
+screenpoint/__init__.py
+screenpoint/screenpoint.py
+screenpoint.egg-info/PKG-INFO
+screenpoint.egg-info/SOURCES.txt
+screenpoint.egg-info/dependency_links.txt
+screenpoint.egg-info/requires.txt
+screenpoint.egg-info/top_level.txt

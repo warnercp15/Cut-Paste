@@ -27,6 +27,7 @@
     "@ionic/angular": "^5.0.0",
     "cordova-plugin-advanced-http": "^3.1.0",
     "cordova-plugin-file": "^6.0.2",
+    "html2canvas": "^1.0.0-rc.7",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"

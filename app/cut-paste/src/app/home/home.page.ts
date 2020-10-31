@@ -3,6 +3,8 @@ import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
 import { HTTP } from '@ionic-native/http/ngx';
 import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
+import html2canvas from 'html2canvas';
 const { Camera,Device } = Plugins;
 
 @Component({
@@ -12,19 +14,59 @@ const { Camera,Device } = Plugins;
 })
 export class HomePage {
 
+  listaImagenes:any
   isApp:any;
+  cut=false;
   private photo:SafeResourceUrl;
 
-  constructor(private sanitizer:DomSanitizer,private http: HTTP) {}  
+  constructor(private sanitizer:DomSanitizer,private http: HTTP,private _http: HttpClient) {}  
 
   async ngOnInit() {
     const info =  Device.getInfo();
-    info["__zone_symbol__value"]["operatingSystem"]=="windows"?this.isApp=false:this.isApp=true;
+    console.log(info);
+    info["_zone_symbol_value"]["operatingSystem"]=="windows"?this.isApp=false:this.isApp=true;
     if (this.isApp){
       console.log("Device");
     }else{
       console.log("Web");
+      this.actualizarBack()
 	  }
+  }
+
+  limpiar(){
+    this._http.get(`http://${environment.URL}/limpiar`).subscribe((response) => {
+      this.listaImagenes=response;
+      console.log(this.listaImagenes);
+      this.screeshot();
+    });
+  }
+
+  actualizarBack(){
+    this.getImages();
+    this.screeshot();
+  }
+
+  getImages(){
+    this._http.get(`http://${environment.URL}/getImages`).subscribe((response) => {
+      this.listaImagenes=response;
+      console.log(this.listaImagenes);
+    });
+  }
+
+  screeshot(){
+    setTimeout( () => {
+      html2canvas(document.body).then(canvas => {
+        let file={"data":canvas.toDataURL()};
+        this._http.post(`http://${environment.URL}/back`,file).subscribe((response) => {
+          console.log(response);
+        });
+      });
+    }, 3000);
+  }
+
+  take(){
+    this.cut=!this.cut;
+    alert(this.cut);
   }
 
   async takePicture() {
@@ -36,7 +78,7 @@ export class HomePage {
     this.photo = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
     let file={
       "data":image.dataUrl,
-      "cut":false
+      "cut":this.cut
     }
 	  this.fail(file);
   }
@@ -51,9 +93,9 @@ export class HomePage {
     };
 
 		this.http.setDataSerializer('json');
-    this.http.post(`http://${environment.ip}:5000/pushImage`, file, headers)
+    this.http.post(`http://${environment.URL}/pushImage`, file, headers)
       .then((data) => {
-        console.log(data)
+        this.cut=!this.cut;
       })
       .catch((error) => {
       console.log(error);
