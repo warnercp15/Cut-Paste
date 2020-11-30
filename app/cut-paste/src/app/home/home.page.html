@@ -1,3 +1,34 @@
+<div id="myNav" *ngIf="!this.isApp">
+  <p>By Warner Cortés & Fabián Alfaro</p>
+  <button (click)="this.saveImage()">Save</button>
+  <button (click)="this.limpiar()">Clear</button>
+</div>
+
+<div id="container">
+
+  <img *ngFor="let data of listaImagenes" src="data:image/png;base64,{{data.img}}" style="left:{{data.x}}px;top:{{data.y}}px;" (click)="this.textToSpeech(data.texto)">
+
+  <div class="big-pac-man" style="left:58%;top:20%;"></div>
+  <div class="ghost" style="color:blue;left:65%;top:26%"></div> 
+  <div class="ghost" style="color:red;left:71%;top:26%"></div>
+  <div class="ghost" style="color:green;left:77%;top:26%"></div>
+
+  <div class="ghost" style="color:blue;left:5%;top:2.5%"></div> 
+  <div class="ghost" style="color:red;left:10%;top:2.5%"></div>
+  <div class="ghost" style="color:green;left:15%;top:2.5%"></div>
+
+  <div class="ghost" style="color:blue;left:23%;top:18.5%"></div> 
+  <div class="ghost" style="color:red;left:23%;top:35.5%"></div>
+  <div class="ghost" style="color:green;left:23%;top:54.5%"></div>
+  <div class="litle-pac-man" style="left:22%;top:70%;"></div>
+
+  <div id="blanco"><p>White Color *</p></div>
+  <div id="rojo"><p>Red Color $</p></div>
+  <div id="verde"><p>Green Color #</p></div>
+  <div id="azul"><p>Blue Color @</p></div>
+</div>
+  
+<button (click)="this.take()" style="top: 200px;" *ngIf="this.isApp">Next</button>
 <ion-content *ngIf="this.isApp">
   <ion-fab vertical="bottom" horizontal="center" slot="fixed">
     <ion-fab-button (click)="takePicture()">
