@@ -1,10 +1,10 @@
-<div id="myNav" *ngIf="!this.isApp">
+<div class="myNav" *ngIf="!this.isApp">
   <p>By Warner Cortés & Fabián Alfaro</p>
   <button (click)="this.saveImage()">Save</button>
   <button (click)="this.limpiar()">Clear</button>
 </div>
 
-<div id="container">
+<div id="container" *ngIf="!this.isApp">
 
   <img *ngFor="let data of listaImagenes" src="data:image/png;base64,{{data.img}}" style="left:{{data.x}}px;top:{{data.y}}px;" (click)="this.textToSpeech(data.texto)">
 
@@ -28,11 +28,23 @@
   <div id="azul"><p>Blue Color @</p></div>
 </div>
   
-<button (click)="this.take()" style="top: 200px;" *ngIf="this.isApp">Next</button>
-<ion-content *ngIf="this.isApp">
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button (click)="takePicture()">
-      <ion-icon name="camera"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-</ion-content>
+
+<div *ngIf="this.isApp">
+  <div class="myNav">
+    <p>By Warner Cortés & Fabián Alfaro</p>
+  </div>
+  <div id="buttonContainer">
+    <button (click)="this.take()" id="changeAction">{{this.action}}</button>
+    <ion-content>
+      <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+        <ion-fab-button (click)="takePicture()">
+          <ion-icon name="camera"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-content>
+  </div>
+</div>
+
+
+
+

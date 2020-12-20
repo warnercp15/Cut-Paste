@@ -18,11 +18,13 @@ export class HomePage {
   listaImagenes:any
   isApp:any;
   cut=false;
+  action:string;
   private photo:SafeResourceUrl;
 
   constructor(private sanitizer:DomSanitizer,private http: HTTP,private _http: HttpClient,private userIdle: UserIdleService) {}  
 
   async ngOnInit() {
+    this.action="Take image";
     const info =  Device.getInfo();
     info["__zone_symbol__value"]["operatingSystem"]=="windows"?this.isApp=false:this.isApp=true;
     if (this.isApp){
@@ -93,7 +95,7 @@ export class HomePage {
 
   take(){
     this.cut=!this.cut;
-    alert(this.cut);
+    this.cut? this.action="Take image": this.action="Take coordinates";
   }
 
   async takePicture() {
@@ -123,6 +125,7 @@ export class HomePage {
     this.http.post(`http://${environment.URL}/pushImage`, file, headers)
       .then((data) => {
         this.cut=!this.cut;
+        this.cut? this.action="Take image": this.action="Take coordinates";
       })
       .catch((error) => {
       console.log(error);
