@@ -1,11 +1,9 @@
+/// <reference path="../../../globals.d.ts" />
+
 import { Component } from '@angular/core';
 import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
-import { HTTP } from '@ionic-native/http/ngx';
-import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
 import html2canvas from 'html2canvas';
-import { UserIdleService } from 'angular-user-idle';
 const { Camera,Device } = Plugins;
 
 @Component({
@@ -15,25 +13,40 @@ const { Camera,Device } = Plugins;
 })
 export class HomePage {
 
-  listaImagenes:any
+  listaImagenes:any=[]
   isApp:any;
-  cut=false;
+  cut;
   action:string;
-  private photo:SafeResourceUrl;
+  socket:any;
+  photo:SafeResourceUrl;
 
-  constructor(private sanitizer:DomSanitizer,private http: HTTP,private _http: HttpClient,private userIdle: UserIdleService) {}  
+  constructor(private sanitizer:DomSanitizer) {}  
 
   async ngOnInit() {
+
+    this.cut="false";
     this.action="Take image";
+
+    this.socket = io.connect("http://192.168.0.107:5000");
+
+		this.socket.on('getImages', (data) => {
+      this.listaImagenes=data;
+    });
+
+    this.socket.on('getBack',() => {
+      this.isApp?null:this.screeshot();
+    });
+    
+    this.socket.on('limpio', (data) => {
+      this.listaImagenes=data;
+      this.screeshot();
+    });
+
+    this.socket.emit('getData');
+
     const info =  Device.getInfo();
     info["__zone_symbol__value"]["operatingSystem"]=="windows"?this.isApp=false:this.isApp=true;
-    if (this.isApp){
-      console.log("Device");
-    }else{
-      console.log("Web");
-      this.userIdle.startWatching();
-      this.userIdle.ping$.subscribe(() =>  {console.log("Refresh");this.actualizarBack();});
-	  }
+    this.isApp?console.log("Device"):console.log("Web");
   }
 
   textToSpeech(texto:string){
@@ -54,31 +67,14 @@ export class HomePage {
   }
 
   limpiar(){
-    this._http.get(`http://${environment.URL}/limpiar`).subscribe((response) => {
-      this.listaImagenes=response;
-      console.log(this.listaImagenes);
-      this.screeshot();
-    });
-  }
-
-  actualizarBack(){
-    this.getImages();
-    this.screeshot();
-  }
-
-  getImages(){
-    this._http.get(`http://${environment.URL}/getImages`).subscribe((response) => {
-      this.listaImagenes=response;
-      console.log(this.listaImagenes);
-    });
+    this.listaImagenes=[];
+    this.socket.emit('limpiar');
   }
 
   screeshot(){
     html2canvas(document.body).then(canvas => {
       let file={"data":canvas.toDataURL()};
-      this._http.post(`http://${environment.URL}/back`,file).subscribe((response) => {
-        console.log(response);
-      });
+      this.socket.emit('back',file);
     });
   }
 
@@ -95,7 +91,7 @@ export class HomePage {
 
   take(){
     this.cut=!this.cut;
-    this.cut? this.action="Take image": this.action="Take coordinates";
+    this.cut? this.action="Take coordinates":this.action="Take image";
   }
 
   async takePicture() {
@@ -109,27 +105,8 @@ export class HomePage {
       "data":image.dataUrl,
       "cut":this.cut
     }
-	  this.fail(file);
-  }
-
-  fail(file) {
-    let imageRetry = 0;
-    while(imageRetry < 1){
-		imageRetry++;
-
-    let headers = {
-        'Content-Type': 'application/json'
-    };
-
-		this.http.setDataSerializer('json');
-    this.http.post(`http://${environment.URL}/pushImage`, file, headers)
-      .then((data) => {
-        this.cut=!this.cut;
-        this.cut? this.action="Take image": this.action="Take coordinates";
-      })
-      .catch((error) => {
-      console.log(error);
-      });
-		}
+    this.cut=!this.cut;
+    this.cut? this.action="Take coordinates":this.action="Take image";
+    this.socket.emit('pushImage',file);
   }
 }
